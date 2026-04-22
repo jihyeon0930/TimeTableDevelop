@@ -54,16 +54,17 @@ public class ScheduleService {
      * @return
      */
     @Transactional(readOnly = true)
-    public Object getAll(Long userId) {
+    public List<GetScheduleAllResponse> getAll(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 유저 입니다.")
         );
-        List<Schedule> schedule = scheduleRepository.findByUser(userId);
+        List<Schedule> schedule = scheduleRepository.findByUserId(userId);
         return schedule.stream().
-                map(schedule -> new GetScheduleAllResponse(
-                        schedule.getId(),
-                        schedule.getUser().getId(),
-                        schedule.getUser().getUserName()
+                map(s -> new GetScheduleAllResponse(
+                        s.getId(),
+                        s.getUser().getId(),
+                        s.getUser().getUserName(),
+                        s.getTitle()
                 ))
                 .toList();
     }

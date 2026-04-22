@@ -25,7 +25,7 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public RequestEntity<List<GetScheduleAllResponse>> getSchedules(@PathVariable Long userId) {
+    public ResponseEntity<List<GetScheduleAllResponse>> getSchedules(@PathVariable Long userId) {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAll(userId));
     }
 }
