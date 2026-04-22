@@ -30,4 +30,11 @@ public class User extends BaseEntity {
     @Size(min = 4, max = 8)
     @Column(name = "user_pass", nullable = false)
     private String userPass;
+
+    public User(String userName, String email, String userPass) {
+        this.userName = userName;
+        this.email = email;
+        this.userPass = userPass;
+    }
+
 }
