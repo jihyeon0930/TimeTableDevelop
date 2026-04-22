@@ -1,8 +1,6 @@
 package com.example.timetabledevelop.schedule.service;
 
-import com.example.timetabledevelop.schedule.dto.CreateScheduleRequest;
-import com.example.timetabledevelop.schedule.dto.CreateScheduleResponse;
-import com.example.timetabledevelop.schedule.dto.GetScheduleAllResponse;
+import com.example.timetabledevelop.schedule.dto.*;
 import com.example.timetabledevelop.schedule.entity.Schedule;
 import com.example.timetabledevelop.schedule.repository.ScheduleRepository;
 import com.example.timetabledevelop.user.entity.User;
@@ -51,7 +49,7 @@ public class ScheduleService {
      * 스케쥴 전체 조회
      *
      * @param userId
-     * @return
+     * @return id, userId, name, title 만 조회
      */
     @Transactional(readOnly = true)
     public List<GetScheduleAllResponse> getAll(Long userId) {
@@ -67,5 +65,62 @@ public class ScheduleService {
                         s.getTitle()
                 ))
                 .toList();
+    }
+
+    /**
+     * 스케쥴 단건 조회
+     *
+     * @param scheduleId
+     * @return 정보 전체 조회 (내용까지)
+     */
+    @Transactional(readOnly = true)
+    public GetScheduleResponse getOne(Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("존재하지 않는 스케쥴 입니다.")
+        );
+        return new GetScheduleResponse(
+                schedule.getId(),
+                schedule.getUser().getId(),
+                schedule.getUser().getUserName(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
+    }
+
+    /**
+     * 스케쥴 수정
+     *
+     * @param scheduleId
+     * @param request
+     * @return
+     */
+    @Transactional
+    public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("존재하지 않는 스케쥴 입니다.")
+        );
+        schedule.update(
+                request.getTitle(),
+                request.getContent()
+        );
+        return new UpdateScheduleResponse(
+                schedule.getId(),
+                schedule.getUser().getId(),
+                schedule.getUser().getUserName(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
+    }
+
+    public void delete(Long scheduleId) {
+        boolean existence = scheduleRepository.existsById(scheduleId);
+        if(!existence) {
+            throw new IllegalStateException("조재하지 않는 스케쥴 입니다.");
+        }
+        scheduleRepository.deleteById(scheduleId);
     }
 }
