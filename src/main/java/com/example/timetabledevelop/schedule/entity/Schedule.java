@@ -23,12 +23,12 @@ public class Schedule extends BaseEntity {
     @NotBlank
     private String title;
 
-    @NotBlank
     private String content;
 
-    public Schedule (String title, String content){
+    public Schedule (String title, String content, User user){
         this.title = title;
         this.content = content;
+        this.user = user;
     }
 
 
