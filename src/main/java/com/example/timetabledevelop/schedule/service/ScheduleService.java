@@ -2,12 +2,16 @@ package com.example.timetabledevelop.schedule.service;
 
 import com.example.timetabledevelop.schedule.dto.CreateScheduleRequest;
 import com.example.timetabledevelop.schedule.dto.CreateScheduleResponse;
+import com.example.timetabledevelop.schedule.dto.GetScheduleAllResponse;
 import com.example.timetabledevelop.schedule.entity.Schedule;
 import com.example.timetabledevelop.schedule.repository.ScheduleRepository;
 import com.example.timetabledevelop.user.entity.User;
 import com.example.timetabledevelop.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ public class ScheduleService {
      * @param request
      * @return
      */
+    @Transactional
     public CreateScheduleResponse save(Long userId, CreateScheduleRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 유저 입니다.")
@@ -40,5 +45,26 @@ public class ScheduleService {
                 savedSchedule.getContent(),
                 savedSchedule.getCreatedAt()
         );
+    }
+
+    /**
+     * 스케쥴 전체 조회
+     *
+     * @param userId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public Object getAll(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalStateException("존재하지 않는 유저 입니다.")
+        );
+        List<Schedule> schedule = scheduleRepository.findByUser(userId);
+        return schedule.stream().
+                map(schedule -> new GetScheduleAllResponse(
+                        schedule.getId(),
+                        schedule.getUser().getId(),
+                        schedule.getUser().getUserName()
+                ))
+                .toList();
     }
 }
