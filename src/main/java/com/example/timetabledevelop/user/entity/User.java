@@ -28,7 +28,7 @@ public class User extends BaseEntity {
     private String email;
 
     @NotBlank
-    @Size(min = 4, max = 8)
+    @Size(min = 8)
     @Column(name = "user_pass")
     private String userPass;
 
