@@ -2,6 +2,7 @@ package com.example.timetabledevelop.user.controller;
 
 import com.example.timetabledevelop.user.dto.*;
 import com.example.timetabledevelop.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<CreateUserResponse> createUser(@RequestBody CreateUserRequest request) {
+    public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(request));
     }
 
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UpdateUserResponse> updateUser(@PathVariable Long userId, @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<UpdateUserResponse> updateUser(@Valid @PathVariable Long userId, @RequestBody UpdateUserRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.update(userId, request));
     }
 

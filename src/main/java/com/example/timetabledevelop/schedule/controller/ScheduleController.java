@@ -2,6 +2,7 @@ package com.example.timetabledevelop.schedule.controller;
 
 import com.example.timetabledevelop.schedule.dto.*;
 import com.example.timetabledevelop.schedule.service.ScheduleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -18,12 +19,12 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping
-    public ResponseEntity<CreateScheduleResponse> saveSchedule(@PathVariable Long userId, @RequestBody CreateScheduleRequest request) {
+    public ResponseEntity<CreateScheduleResponse> saveSchedule(@Valid @PathVariable Long userId, @RequestBody CreateScheduleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(userId, request));
     }
 
     @GetMapping
-    public ResponseEntity<List<GetScheduleAllResponse>> getSchedules(@PathVariable Long userId) {
+    public ResponseEntity<List<GetScheduleAllResponse>> getSchedules(@Valid @PathVariable Long userId) {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAll(userId));
     }
 
