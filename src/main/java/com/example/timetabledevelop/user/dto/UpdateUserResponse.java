@@ -6,10 +6,12 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
-public class UpdateUserRequest {
-    private String userName;
-    private String email;
-    private String userPass;
+@RequiredArgsConstructor
+public class UpdateUserResponse {
+    private final Long id;
+    private final String userName;
+    private final String email;
+    private final String userPass;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 }
