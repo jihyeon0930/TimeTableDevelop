@@ -14,7 +14,9 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
@@ -23,12 +25,12 @@ public class User extends BaseEntity {
 
     @NotBlank
     @Email
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", unique = true)
     private String email;
 
     @NotBlank
     @Size(min = 4, max = 8)
-    @Column(name = "user_pass", nullable = false)
+    @Column(name = "user_pass")
     private String userPass;
 
     public User(String userName, String email, String userPass) {
@@ -37,4 +39,9 @@ public class User extends BaseEntity {
         this.userPass = userPass;
     }
 
+    public void update(String userName, String email, String userPass) {
+        this.userName = userName;
+        this.email = email;
+        this.userPass = userPass;
+    }
 }

@@ -1,15 +1,13 @@
 package com.example.timetabledevelop.user.controller;
 
-import com.example.timetabledevelop.user.dto.CreateUserRequest;
-import com.example.timetabledevelop.user.dto.CreateUserResponse;
+import com.example.timetabledevelop.user.dto.*;
 import com.example.timetabledevelop.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -20,7 +18,30 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<CreateUserResponse> createUser(@RequestBody CreateUserRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(request));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.save(request));
     }
 
+    @GetMapping
+    public ResponseEntity<List<GetUserAllResponse>> getUsers() {
+        return ResponseEntity.ok(userService.getAll());
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<GetUserResponse> getUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getOne(userId));
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<UpdateUserResponse> updateUser(
+            @PathVariable Long userId,
+            @RequestBody UpdateUserRequest request) {
+        return ResponseEntity.ok(userService.update(userId, request));
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        userService.delete(userId);
+        return ResponseEntity.noContent().build();
+    }
 }
