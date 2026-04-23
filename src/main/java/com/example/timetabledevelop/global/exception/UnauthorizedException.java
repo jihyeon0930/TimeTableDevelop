@@ -1,4 +1,10 @@
 package com.example.timetabledevelop.global.exception;
 
-public class Unauthorized {
+import org.springframework.http.HttpStatus;
+
+public class UnauthorizedException extends CustomException {
+
+    public UnauthorizedException(String message) {
+        super(message, HttpStatus.UNAUTHORIZED);
+    }
 }

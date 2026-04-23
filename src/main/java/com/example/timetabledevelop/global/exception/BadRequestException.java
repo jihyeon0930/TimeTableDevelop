@@ -1,4 +1,10 @@
 package com.example.timetabledevelop.global.exception;
 
-public class BadRequestException {
+import org.springframework.http.HttpStatus;
+
+public class BadRequestException extends CustomException {
+
+    public BadRequestException(String message) {
+        super(message, HttpStatus.BAD_REQUEST);
+    }
 }

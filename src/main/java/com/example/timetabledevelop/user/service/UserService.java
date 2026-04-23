@@ -1,5 +1,8 @@
 package com.example.timetabledevelop.user.service;
 
+import com.example.timetabledevelop.global.config.PasswordEncoder;
+import com.example.timetabledevelop.global.exception.DuplicateException;
+import com.example.timetabledevelop.global.exception.NotFoundException;
 import com.example.timetabledevelop.user.dto.*;
 import com.example.timetabledevelop.user.entity.User;
 import com.example.timetabledevelop.user.repository.UserRepository;
@@ -14,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
 
-
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     /**
@@ -25,10 +28,17 @@ public class UserService {
      */
     @Transactional
     public CreateUserResponse save(CreateUserRequest request) {
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new DuplicateException("이미 존재하는 이메일입니다.");
+        }
+
+        String encodedPassword = passwordEncoder.encode(request.getUserPass());
+
         User user = new User(
                 request.getUserName(),
                 request.getEmail(),
-                request.getUserPass()
+                encodedPassword
         );
         User savedUser = userRepository.save(user);
         return new CreateUserResponse(
@@ -69,7 +79,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public GetUserResponse getOne(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 유저 입니다.")
+                () -> new NotFoundException("존재하지 않는 유저 입니다.")
         );
         return new GetUserResponse(
                 user.getId(),
@@ -91,7 +101,7 @@ public class UserService {
     @Transactional
     public UpdateUserResponse update(Long userId, UpdateUserRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 유저 입니다.")
+                () -> new NotFoundException("존재하지 않는 유저 입니다.")
         );
         user.update(
                 request.getUserName(),

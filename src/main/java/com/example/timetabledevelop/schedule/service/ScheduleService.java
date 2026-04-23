@@ -1,5 +1,6 @@
 package com.example.timetabledevelop.schedule.service;
 
+import com.example.timetabledevelop.global.exception.NotFoundException;
 import com.example.timetabledevelop.schedule.dto.*;
 import com.example.timetabledevelop.schedule.entity.Schedule;
 import com.example.timetabledevelop.schedule.repository.ScheduleRepository;
@@ -27,7 +28,7 @@ public class ScheduleService {
     @Transactional
     public CreateScheduleResponse save(Long userId, CreateScheduleRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 유저 입니다.")
+                () -> new NotFoundException("존재하지 않는 유저 입니다.")
         );
         Schedule schedule = new Schedule(
                 request.getTitle(),
@@ -54,7 +55,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public List<GetScheduleAllResponse> getAll(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 유저 입니다.")
+                () -> new NotFoundException("존재하지 않는 유저 입니다.")
         );
         List<Schedule> schedule = scheduleRepository.findByUserId(userId);
         return schedule.stream().
@@ -76,7 +77,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public GetScheduleResponse getOne(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 스케쥴 입니다.")
+                () -> new NotFoundException("존재하지 않는 스케쥴 입니다.")
         );
         return new GetScheduleResponse(
                 schedule.getId(),
@@ -99,7 +100,7 @@ public class ScheduleService {
     @Transactional
     public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 스케쥴 입니다.")
+                () -> new NotFoundException("존재하지 않는 스케쥴 입니다.")
         );
         schedule.update(
                 request.getTitle(),

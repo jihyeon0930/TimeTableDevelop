@@ -1,4 +1,10 @@
 package com.example.timetabledevelop.global.exception;
 
-public class DuplicateException {
+import org.springframework.http.HttpStatus;
+
+public class DuplicateException extends CustomException {
+
+    public DuplicateException(String message) {
+        super(message, HttpStatus.CONFLICT);
+    }
 }
