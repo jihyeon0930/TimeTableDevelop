@@ -1,14 +1,20 @@
 package com.example.timetabledevelop.schedule.service;
 
+import com.example.timetabledevelop.global.exception.NotFoundException;
 import com.example.timetabledevelop.schedule.dto.*;
 import com.example.timetabledevelop.schedule.entity.Schedule;
 import com.example.timetabledevelop.schedule.repository.ScheduleRepository;
 import com.example.timetabledevelop.user.entity.User;
 import com.example.timetabledevelop.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Service
@@ -27,7 +33,7 @@ public class ScheduleService {
     @Transactional
     public CreateScheduleResponse save(Long userId, CreateScheduleRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 유저 입니다.")
+                () -> new NotFoundException("존재하지 않는 유저 입니다.")
         );
         Schedule schedule = new Schedule(
                 request.getTitle(),
@@ -54,7 +60,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public List<GetScheduleAllResponse> getAll(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 유저 입니다.")
+                () -> new NotFoundException("존재하지 않는 유저 입니다.")
         );
         List<Schedule> schedule = scheduleRepository.findByUserId(userId);
         return schedule.stream().
@@ -76,7 +82,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public GetScheduleResponse getOne(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 스케쥴 입니다.")
+                () -> new NotFoundException("존재하지 않는 스케쥴 입니다.")
         );
         return new GetScheduleResponse(
                 schedule.getId(),
@@ -99,7 +105,7 @@ public class ScheduleService {
     @Transactional
     public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 스케쥴 입니다.")
+                () -> new NotFoundException("존재하지 않는 스케쥴 입니다.")
         );
         schedule.update(
                 request.getTitle(),
@@ -122,5 +128,17 @@ public class ScheduleService {
             throw new IllegalStateException("조재하지 않는 스케쥴 입니다.");
         }
         scheduleRepository.deleteById(scheduleId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<GetSchedulePageResponse> getSchedules(int page, int size) {
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("modifiedAt").descending()
+        );
+
+        return scheduleRepository.findAllWithCommentCount(pageable);
     }
 }
