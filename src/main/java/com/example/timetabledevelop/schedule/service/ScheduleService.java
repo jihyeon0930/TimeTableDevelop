@@ -7,9 +7,14 @@ import com.example.timetabledevelop.schedule.repository.ScheduleRepository;
 import com.example.timetabledevelop.user.entity.User;
 import com.example.timetabledevelop.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Service
@@ -123,5 +128,17 @@ public class ScheduleService {
             throw new IllegalStateException("조재하지 않는 스케쥴 입니다.");
         }
         scheduleRepository.deleteById(scheduleId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<GetSchedulePageResponse> getSchedules(int page, int size) {
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("modifiedAt").descending()
+        );
+
+        return scheduleRepository.findAllWithCommentCount(pageable);
     }
 }
